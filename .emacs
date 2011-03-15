@@ -1,5 +1,5 @@
 ;;;;;;;;;;;;;;;;;;;; Utilities ;;;;;;;;;;;;;;;;;;;;
-(setq browse-url-browser-function 'browse-url-generic)			;Default browser
+(setq browse-url-browser-function 'browse-url-generic)          ;Default browser
 (setq browse-url-generic-program "uzbl-browser")
 
 
@@ -16,29 +16,29 @@
 (color-theme-billw)
 
 (set-default-font "Inconsolata 14")
-(setq inhibit-splash-screen t)									;Disable the splash screen; also see the --no-splash option
-(transient-mark-mode t)											;Show selected area
-(global-font-lock-mode t)										;Turn on coloring and fonts
-(column-number-mode t)											;Show cursor position in line
-(tool-bar-mode -1)												;Hide toolbar (GUI)
-(menu-bar-mode -1)												;Hide menubar
-(setq scroll-step 1)											;Scroll pages one line at a time
-(mouse-wheel-mode t)											;Enable the mouse wheel for scrolling
-(scroll-bar-mode -1)											;Hide scroll-bars
-(setq display-time-24hr-format t)								;Time and date in mode line
+(setq inhibit-splash-screen t)                                  ;Disable the splash screen; also see the --no-splash option
+(transient-mark-mode t)                                         ;Show selected area
+(global-font-lock-mode t)                                       ;Turn on coloring and fonts
+(column-number-mode t)                                          ;Show cursor position in line
+(tool-bar-mode -1)                                              ;Hide toolbar (GUI)
+(menu-bar-mode -1)                                              ;Hide menubar
+(setq scroll-step 1)                                            ;Scroll pages one line at a time
+(mouse-wheel-mode t)                                            ;Enable the mouse wheel for scrolling
+(scroll-bar-mode -1)                                            ;Hide scroll-bars
+(setq display-time-24hr-format t)                               ;Time and date in mode line
 (setq display-time-day-and-date t)
 (display-time)
-(setq case-fold-search t)										;Case insensitive search and autocompletion
+(setq case-fold-search t)                                       ;Case insensitive search and autocompletion
 (setq read-file-name-completion-ignore-case t)
-(defun yes-or-no-p (arg)										;Replace yes-or-no with y-o-n
+(defun yes-or-no-p (arg)                                        ;Replace yes-or-no with y-o-n
   "Alias for y-or-n-p"
   (y-or-n-p arg))
 
-(fringe-mode 0)													;Disable signalling columns
+(fringe-mode 0)                                                 ;Disable signalling columns
 
 ;; Server quirks
-;;(add-hook 'server-done-hook 'delete-frame)						;Close the client frame after the buffer has been closed
-;;(add-to-list 'default-frame-alist '(font . "Inconsolata 14"))	;Required to set font for every new client frame
+;;(add-hook 'server-done-hook 'delete-frame)                        ;Close the client frame after the buffer has been closed
+;;(add-to-list 'default-frame-alist '(font . "Inconsolata 14")) ;Required to set font for every new client frame
 
 
 ;;;;;;;;;;;;;;;;;;;; Unicode ;;;;;;;;;;;;;;;;;;;;
@@ -50,10 +50,10 @@
 
 
 ;;;;;;;;;;;;;;;;;;;; Backups ;;;;;;;;;;;;;;;;;;;;
-(setq make-backup-files t)										;Activate automatic backups
-(setq version-control t)										;Keep multiple backups
-(setq backup-directory-alist '((".*" . "~/.emacs_backups/")))	;Destination directory
-(setq delete-old-versions t)									;Silently overwrite old versions
+(setq make-backup-files t)                                      ;Activate automatic backups
+(setq version-control t)                                        ;Keep multiple backups
+(setq backup-directory-alist '((".*" . "~/.emacs_backups/")))   ;Destination directory
+(setq delete-old-versions t)                                    ;Silently overwrite old versions
 
 
 ;;;;;;;;;;;;;;;;;;;; Misc ;;;;;;;;;;;;;;;;;;;;
@@ -61,19 +61,19 @@
   "Sort words in the selected region by alphabetical order"
   (interactive)
   (insert (mapconcat 'identity
-		     (sort (split-string (delete-and-extract-region
-					  (point)
-					  (mark)))
-			   'string<)
-		     " ")))
+             (sort (split-string (delete-and-extract-region
+                      (point)
+                      (mark)))
+               'string<)
+             " ")))
 
-(setq write-region-inhibit-fsync t)								;Do not force sync while saving (don't spin up hard disk in power saving mode)
+(setq write-region-inhibit-fsync t)                             ;Do not force sync while saving (don't spin up hard disk in power saving mode)
 
 
 ;;;;;;;;;;;;;;;;;;;; General Programming ;;;;;;;;;;;;;;;;;;;;
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)		;Fix junk characters in shell mode
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)      ;Fix junk characters in shell mode
 ;(define-key global-map (kbd "M-RET") 'hippie-expand)
-(global-auto-revert-mode t)										;Auto revert files modified outside Emacs
+(global-auto-revert-mode t)                                     ;Auto revert files modified outside Emacs
 (setq default-tab-width 4)
 
 
@@ -115,19 +115,19 @@
 
 ;;;;;;;;;;;;;;;;;;;; Org mode ;;;;;;;;;;;;;;;;;;;;
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(setq org-agenda-files (list "~/.emacs.d/todos.org"))			;Agenda files
-;;(setq org-log-done t)											;Show close date for todos
-;;(define-key global-map "\C-cl" 'org-store-link)				;Bindings
+(setq org-agenda-files (list "~/.emacs.d/todos.org"))           ;Agenda files
+;;(setq org-log-done t)                                         ;Show close date for todos
+;;(define-key global-map "\C-cl" 'org-store-link)               ;Bindings
 ;;(define-key global-map "\C-ca" 'org-agenda)
 
 
 ;;;;;;;;;;;;;;;;;;;; Mail ;;;;;;;;;;;;;;;;;;;;
 (defun my-mail-mode-hook ()
-  (turn-on-auto-fill)											;Wrap lines
-  (flush-lines "^\\(> \n\\)*> -- \n\\(\n?> .*\\)*")				;Kill quoted sigs.
-  (not-modified)												;We haven't changed the buffer, haven't we? *g*
-  (mail-text)													;Jump to the beginning of the mail text
-  (setq make-backup-files nil))									;Disable backups
+  (turn-on-auto-fill)                                           ;Wrap lines
+  (flush-lines "^\\(> \n\\)*> -- \n\\(\n?> .*\\)*")             ;Kill quoted sigs.
+  (not-modified)                                                ;We haven't changed the buffer, haven't we? *g*
+  (mail-text)                                                   ;Jump to the beginning of the mail text
+  (setq make-backup-files nil))                                 ;Disable backups
 
 (add-to-list 'auto-mode-alist '("mutt-" . mail-mode))
 (add-hook 'mail-mode-hook 'my-mail-mode-hook)
@@ -152,7 +152,7 @@
           "Major mode for editing StumpWM rc files" t)
 (add-to-list 'auto-mode-alist '("/\\.stumpwmrc$" . stumpwm-mode))
 
-(add-to-list 'auto-mode-alist '("/PKGBUILD$" . shell-script-mode))				;Arch PKGBUILD
+(add-to-list 'auto-mode-alist '("/PKGBUILD$" . shell-script-mode))              ;Arch PKGBUILD
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (custom-set-variables
