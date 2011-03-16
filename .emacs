@@ -1,3 +1,5 @@
+(add-to-list 'load-path "~/.emacs.d/site-lisp")
+
 ;;;;;;;;;;;;;;;;;;;; Utilities ;;;;;;;;;;;;;;;;;;;;
 (setq browse-url-browser-function 'browse-url-generic)          ;Default browser
 (setq browse-url-generic-program "uzbl-browser")
@@ -139,10 +141,6 @@
 
 
 ;;;;;;;;;;;;;;;;;;;; Auto modes ;;;;;;;;;;;;;;;;;;;;
-(autoload 'lua-mode "lua-mode"
-  "Major mode for LUA files")
-(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-
 (autoload 'muttrc-mode "muttrc-mode"
   "Major mode to edit muttrc files" t)
 (add-to-list 'auto-mode-alist '("muttrc" . muttrc-mode))
@@ -153,6 +151,8 @@
 (add-to-list 'auto-mode-alist '("/\\.stumpwmrc$" . stumpwm-mode))
 
 (add-to-list 'auto-mode-alist '("/PKGBUILD$" . shell-script-mode))              ;Arch PKGBUILD
+
+(add-to-list 'auto-mode-alist '("\\`/etc/" . conf-mode) 1)						;If no other mode matches
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (custom-set-variables
