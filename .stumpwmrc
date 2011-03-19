@@ -1,95 +1,111 @@
-; -*- lisp -*-
-
 (in-package :stumpwm)
 (set-contrib-dir "/usr/share/stumpwm")
 
-;; This is the prefix key for the *root-map*, in case I need some exotic command
-(set-prefix-key (kbd "s-t"))
+(defparameter *mod-key* "s")
+
+;;; Group commands into logical groups, each with its own prefix
+(defmacro define-key-group (name prefix &body mappings)
+  `(progn
+     (defvar ,name (make-sparse-keymap))
+     (define-key *top-map* (kbd ,(format nil "~a-~a" *mod-key* prefix)) ',name)
+     ,@(mapcar (lambda(map)
+                 `(define-key ,name (kbd ,(car map)) ,@(cdr map)))
+               mappings)))
 
 ;; Commands for managing groups
-(defvar *group-map* (make-sparse-keymap))
-(define-key *top-map* (kbd "s-g") '*group-map*)
-(define-key *group-map* (kbd "g") "groups")
-(define-key *group-map* (kbd "j") "gnext")
-(define-key *group-map* (kbd "k") "gprev")
-(define-key *group-map* (kbd "d") "gkill")
-(define-key *group-map* (kbd "n") "gnew")
-(define-key *group-map* (kbd "r") "grename")
+(define-key-group *group-map* "g"
+  ("g" "groups")
+  ("j" "gnext")
+  ("k" "gprev")
+  ("d" "gkill")
+  ("n" "gnew")
+  ("r" "grename"))
 
 ;; Meta-commands and administration
-(defvar *control-map* (make-sparse-keymap))
-(define-key *top-map* (kbd "s-x") '*control-map*)
-(define-key *control-map* (kbd "q") "quit")
-(define-key *control-map* (kbd "r") "loadrc")
-(define-key *control-map* (kbd ":") "colon")
-(define-key *control-map* (kbd ";") "eval")
-(define-key *control-map* (kbd "d") "delete")
-(define-key *control-map* (kbd "h") "exec sudo pm-suspend")
-(define-key *control-map* (kbd "H") "exec sudo pm-hibernate")
+(define-key-group *control-map* "x"
+  ("q" "quit")
+  ("r" "loadrc")
+  (":" "colon")
+  (";" "eval")
+  ("d" "delete")
+  ("h" "exec sudo pm-suspend")
+  ("H" "exec sudo pm-hibernate"))
 
 ;; Commands for managing windows
-(defvar *window-map* (make-sparse-keymap))
-(define-key *top-map* (kbd "s-w") '*window-map*)
-(define-key *window-map* (kbd "w") "windows")
-(define-key *window-map* (kbd "s") "hsplit")
-(define-key *window-map* (kbd "S") "vsplit")
-(define-key *window-map* (kbd "r") "iresize")
-(define-key *window-map* (kbd "o") "only")
-(define-key *window-map* (kbd "d") "remove")
-(define-key *window-map* (kbd "=") "balance-frames")
-(define-key *window-map* (kbd "j") "move-focus down")
-(define-key *window-map* (kbd "k") "move-focus up")
-(define-key *window-map* (kbd "h") "move-focus left")
-(define-key *window-map* (kbd "l") "move-focus right")
-(define-key *window-map* (kbd "J") "move-window down")
-(define-key *window-map* (kbd "K") "move-window up")
-(define-key *window-map* (kbd "H") "move-window left")
-(define-key *window-map* (kbd "L") "move-window right")
-(define-key *window-map* (kbd "SPC") "pull-hidden-next")
-(define-key *window-map* (kbd "S-SPC") "pull-hidden-previous")
+(define-key-group *window-map* "w"
+  ("w" "windows")
+  ("s" "hsplit")
+  ("S" "vsplit")
+  ("r" "iresize")
+  ("o" "only")
+  ("d" "remove")
+  ("=" "balance-frames")
+  ("j" "move-focus down")
+  ("k" "move-focus up")
+  ("h" "move-focus left")
+  ("l" "move-focus right")
+  ("J" "move-window down")
+  ("K" "move-window up")
+  ("H" "move-window left")
+  ("L" "move-window right")
+  ("SPC" "pull-hidden-next")
+  ("S-SPC" "pull-hidden-previous"))
 
-;; We use the *top-map* for a one-level indirection
-;; This allows us to emulate Awesome's keys, without using a prefix
 
-;;; Shortcuts
-(define-key *top-map* (kbd "s-j") "move-focus down")
-(define-key *top-map* (kbd "s-k") "move-focus up")
-(define-key *top-map* (kbd "s-h") "move-focus left")
-(define-key *top-map* (kbd "s-l") "move-focus right")
-(define-key *top-map* (kbd "s-J") "move-window down")
-(define-key *top-map* (kbd "s-K") "move-window up")
-(define-key *top-map* (kbd "s-H") "move-window left")
-(define-key *top-map* (kbd "s-L") "move-window right")
-(define-key *top-map* (kbd "s-SPC") "pull-hidden-next")
-(define-key *top-map* (kbd "s-S-SPC") "pull-hidden-previous")
-(define-key *top-map* (kbd "s-s") "hsplit")
-(define-key *top-map* (kbd "s-S") "vsplit")
+;;; We use the *top-map* for a one-level indirection (no prefix)
+(defmacro define-keys-top (prefix &body mappings)
+  (let ((fmt (if (null prefix)
+                 "~a"
+                 (concatenate 'string *mod-key* "-~a"))))
+    `(progn
+       ,@(mapcar (lambda(map)
+                 `(define-key *top-map* (kbd ,(format nil fmt (car map))) ,@(cdr map)))
+               mappings))))
+
+(define-keys-top t
+  ;; Shortcuts
+  ("j" "move-focus down")
+  ("k" "move-focus up")
+  ("h" "move-focus left")
+  ("l" "move-focus right")
+  ("J" "move-window down")
+  ("K" "move-window up")
+  ("H" "move-window left")
+  ("L" "move-window right")
+  ("SPC" "pull-hidden-next")
+  ("S-SPC" "pull-hidden-previous")
+  ("s" "hsplit")
+  ("S" "vsplit")
+
+  ;; Applications
+  ("I" "exec uzbl-browser")
+  ("i" "exec firefox")
+  ("e" "exec emacsclient -c")
+  ("RET" "exec sakura")
+  ("m" "exec sakura -e 'mutt -y'"))
+
+(define-keys-top nil
+  ("XF86AudioLowerVolume" "exec amixer -q sset Master 5%- unmute")
+  ("XF86AudioRaiseVolume" "exec amixer -q sset Master 5%+ unmute")
+  ("XF86AudioMute" "exec amixer -q sset Master toggle"))
+
+
 ;;; Default groups
-(define-key *top-map* (kbd "s-1") "gselect 1")
-(define-key *top-map* (kbd "s-2") "gselect 2")
-(define-key *top-map* (kbd "s-3") "gselect 3")
-(define-key *top-map* (kbd "s-4") "gselect 4")
-(define-key *top-map* (kbd "s-5") "gselect 4")
-(define-key *top-map* (kbd "s-!") "gmove 1")
-(define-key *top-map* (kbd "s-@") "gmove 2")
-(define-key *top-map* (kbd "s-#") "gmove 3")
-(define-key *top-map* (kbd "s-$") "gmove 4")
-(define-key *top-map* (kbd "s-%") "gmove 5")
-;;; Applications
-(define-key *top-map* (kbd "s-I") "exec uzbl-browser")
-(define-key *top-map* (kbd "s-i") "exec firefox")
-(define-key *top-map* (kbd "s-e") "exec emacsclient -c")
-(define-key *top-map* (kbd "s-RET") "exec sakura")
-(define-key *top-map* (kbd "s-m") "exec sakura -e 'mutt -y'")
+(defun define-groups (keys)
+  (dotimes (n (length keys))
+     (let ((n+ (1+ n)))         ;Start at group 1
+       (define-key *top-map* (kbd (format nil "~a-~a" *mod-key* n+)) (format nil "gselect ~a" n+))
+       (define-key *top-map* (kbd (format nil "~a-~a" *mod-key* (char keys n))) (format nil "gmove ~a" n+)))))
 
-;; Message window font
+(defun create-groups (&rest names)
+  (dolist (name names)
+    (run-commands (format nil "gnewbg ~a" name))))
+
+(define-groups "!@#$%^")
+(create-groups "Net" "Emacs" "Mp3")
+
+
+;;; Message window font
 (set-font "-xos4-terminus-medium-r-normal--14-140-72-72-c-80-iso8859-15")
-
-;;; Define window placement policy...
-
-;; Clear rules
-(clear-window-placement-rules)
-
-(define-frame-preference "Emacs"
-  (1 t t :restore "emacs-editing-dump" :title "...xdvi")
-  (0 t t :create "emacs-dump" :class "Emacs"))
+;;; This is the prefix key for the (unused) *root-map*
+(set-prefix-key (kbd "s-t"))
