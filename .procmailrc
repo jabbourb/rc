@@ -1,0 +1,72 @@
+VERBOSE=off
+MAILDIR=$HOME/mail
+DEFAULT=inbox/			#If no rule matches
+LOGFILE=$HOME/.procmail.log
+CLAMD=/usr/bin/clamdscan
+
+########## Virus ##########
+:0 Wic
+|$CLAMD --no-summary --stdout -
+
+CLAMAV_CODE=$?
+
+:0:
+* CLAMAV_CODE ?? 1
+virus/
+
+:0:
+* CLAMAV_CODE ?? 2
+failed/
+
+# :0:
+# * !^X-clamav-mine:.*OK
+# virus/
+####################
+
+########## Spam ##########
+# Pipe through Bogofilter and update the db
+:0 fhbw
+| bogofilter -u -e -p
+
+# If bogofilter failed, return the mail to the queue;
+# the MTA will retry to deliver it later
+:0e
+{ EXITCODE=75 HOST }
+
+:0:
+* ^X-Bogosity: Spam
+spam/
+
+:0:
+* ^X-Bogosity: Unsure
+unsure/
+####################
+
+########## Misc ##########
+# Add lines count to mails
+:0bw
+LINES=|wc -l | tr -d " "
+:0fhw
+|formail -a "Lines: $LINES"
+####################
+
+########## Sorting ##########
+:0:
+* ^From.*@archlinux.org
+arch/
+
+:0:
+* ^From.*@calorie-count.com
+cc/
+
+:0:
+* ^From:.*berjaoui
+ahmad/
+
+:0:
+* (^To.*@ul.edu.lb|^From.*@ul.edu.lb)
+ul/
+
+:0:
+* ^From.*@centraliens.net
+ecp/
