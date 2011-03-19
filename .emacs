@@ -8,6 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;; L&F ;;;;;;;;;;;;;;;;;;;;
 ;; Vimpulse (Vim-like keybindings)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/vimpulse")
+(setq vimpulse-want-quit-like-Vim nil)
 (require 'vimpulse)
 
 ;; Color theme (manually setting colors doesn't play nicely with emacsclient :(
@@ -40,7 +41,7 @@
 
 ;; Server quirks
 ;;(add-hook 'server-done-hook 'delete-frame)                        ;Close the client frame after the buffer has been closed
-;;(add-to-list 'default-frame-alist '(font . "Inconsolata 14")) ;Required to set font for every new client frame
+(add-to-list 'default-frame-alist '(font . "Inconsolata 14")) ;Required to set font for every new client frame
 
 
 ;;;;;;;;;;;;;;;;;;;; Unicode ;;;;;;;;;;;;;;;;;;;;
@@ -87,6 +88,7 @@
 (vimpulse-map "\\i" 'indent-region)
 (setq viper-auto-indent 1)
 (setq tab-always-indent 'complete)
+(setq indent-tabs-mode nil)                                     ;Indent inserts spaces
 
 
 ;;;;;;;;;;;;;;;;;;;; Auto-complete ;;;;;;;;;;;;;;;;;;;;
