@@ -84,11 +84,12 @@
 (vimpulse-map "zz" 'hs-toggle-hiding)
 (vimpulse-map "za" 'hs-hide-all)
 (vimpulse-map "zn" 'hs-show-all)
-(add-hook 'lisp-mode-hook (lambda() (hs-minor-mode 1)))
 (vimpulse-map "\\i" 'indent-region)
 (setq viper-auto-indent 1)
 (setq tab-always-indent 'complete)
-(setq indent-tabs-mode nil)                                     ;Indent inserts spaces
+(add-hook 'lisp-mode-hook (lambda()
+                            (hs-minor-mode 1)
+                            (setq indent-tabs-mode nil)))       ;Indent inserts spaces
 
 
 ;;;;;;;;;;;;;;;;;;;; Auto-complete ;;;;;;;;;;;;;;;;;;;;
@@ -150,11 +151,11 @@
 
 (autoload 'stumpwm-mode "stumpwm-mode"
           "Major mode for editing StumpWM rc files" t)
-(add-to-list 'auto-mode-alist '("/\\.stumpwmrc$" . stumpwm-mode))
+(add-to-list 'auto-mode-alist '("/\\.stumpwmrc$" . (lambda() (lisp-mode) (stumpwm-mode))))
 
 (add-to-list 'auto-mode-alist '("/PKGBUILD$" . shell-script-mode))              ;Arch PKGBUILD
 
-(add-to-list 'auto-mode-alist '("\\`/etc/" . conf-mode) 1)						;If no other mode matches
+(add-to-list 'auto-mode-alist '("\\`/etc/" . conf-mode) 1)                      ;If no other mode matches
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (custom-set-variables
