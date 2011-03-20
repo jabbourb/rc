@@ -1,6 +1,7 @@
 (in-package :stumpwm)
 (set-contrib-dir "/usr/share/stumpwm")
 
+;;; Modifier: Windows key
 (defparameter *mod-key* "s")
 
 ;;; Group commands into logical groups, each with its own prefix
@@ -53,14 +54,12 @@
 
 
 ;;; We use the *top-map* for a one-level indirection (no prefix)
-(defmacro define-keys-top (prefix &body mappings)
-  (let ((fmt (if (null prefix)
-                 "~a"
-                 (concatenate 'string *mod-key* "-~a"))))
-    `(progn
-       ,@(mapcar (lambda(map)
-                 `(define-key *top-map* (kbd ,(format nil fmt (car map))) ,@(cdr map)))
-               mappings))))
+(defmacro define-keys-top (use-mod &body mappings)
+  `(progn
+     ,@(mapcar (lambda(map)
+                 `(define-key *top-map*
+                      (kbd ,(format nil "~:[~*~;~a-~]~a" use-mod *mod-key* (car map))) ,@(cdr map)))
+               mappings)))
 
 (define-keys-top t
   ;; Shortcuts
@@ -77,6 +76,9 @@
   ("s" "hsplit")
   ("S" "vsplit")
 
+  ;; Mode line
+  ("f" "mode-line")
+
   ;; Applications
   ("I" "exec uzbl-browser")
   ("i" "exec firefox")
@@ -84,18 +86,31 @@
   ("RET" "exec sakura")
   ("m" "exec sakura -e 'mutt -y'"))
 
+;; Don't use a modifier for audio keys
 (define-keys-top nil
   ("XF86AudioLowerVolume" "exec amixer -q sset Master 5%- unmute")
   ("XF86AudioRaiseVolume" "exec amixer -q sset Master 5%+ unmute")
   ("XF86AudioMute" "exec amixer -q sset Master toggle"))
 
 
+;;; Mode-line
+(setf *mode-line-timeout* 1
+      *window-format* "%n%s%30t%m"
+      *screen-mode-line-format* (list '(:eval (run-shell-command "date +%R|tr -d '\\n'" t)) ;Remove trailing newline
+                                      " [^B%n^b] %W"))
+;; Activate the mode line for the current screen
+(if (not (head-mode-line (current-head)))
+     (toggle-mode-line (current-screen) (current-head)))
+
+
 ;;; Default groups
 (defun define-groups (keys)
   (dotimes (n (length keys))
      (let ((n+ (1+ n)))         ;Start at group 1
-       (define-key *top-map* (kbd (format nil "~a-~a" *mod-key* n+)) (format nil "gselect ~a" n+))
-       (define-key *top-map* (kbd (format nil "~a-~a" *mod-key* (char keys n))) (format nil "gmove ~a" n+)))))
+       (define-key *top-map*
+           (kbd (format nil "~a-~a" *mod-key* n+)) (format nil "gselect ~a" n+))
+       (define-key *top-map*
+           (kbd (format nil "~a-~a" *mod-key* (char keys n))) (format nil "gmove ~a" n+)))))
 
 (defun create-groups (&rest names)
   (dolist (name names)
