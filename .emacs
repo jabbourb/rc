@@ -1,3 +1,4 @@
+(require 'cl)
 (add-to-list 'load-path "~/.emacs.d/site-lisp")
 
 ;;;;;;;;;;;;;;;;;;;; Utilities ;;;;;;;;;;;;;;;;;;;;
@@ -10,8 +11,8 @@
 (add-to-list 'load-path "~/.emacs.d/site-lisp/vimpulse")
 ;; Emulate "C-x C-c" on ":q" instead of killing the server
 ;;(setq vimpulse-want-quit-like-Vim nil)            ;This only deletes the buffer, and doesn't kill the client
-(setf (cdr (assoc "quit" vimpulse-extra-ex-commands)) '((save-buffers-kill-terminal)))
 (require 'vimpulse)
+(setf (cdr (assoc "quit" vimpulse-extra-ex-commands)) '((save-buffers-kill-terminal)))
 
 ;; Color theme (manually setting colors doesn't play nicely with emacsclient :(
 ;;(set-foreground-color "white")
