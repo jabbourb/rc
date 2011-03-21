@@ -8,7 +8,9 @@
 ;;;;;;;;;;;;;;;;;;;; L&F ;;;;;;;;;;;;;;;;;;;;
 ;; Vimpulse (Vim-like keybindings)
 (add-to-list 'load-path "~/.emacs.d/site-lisp/vimpulse")
-(setq vimpulse-want-quit-like-Vim nil)
+;; Emulate "C-x C-c" on ":q" instead of killing the server
+;;(setq vimpulse-want-quit-like-Vim nil)            ;This only deletes the buffer, and doesn't kill the client
+(setf (cdr (assoc "quit" vimpulse-extra-ex-commands)) '((save-buffers-kill-terminal)))
 (require 'vimpulse)
 
 ;; Color theme (manually setting colors doesn't play nicely with emacsclient :(
@@ -87,9 +89,14 @@
 (vimpulse-map "\\i" 'indent-region)
 (setq viper-auto-indent 1)
 (setq tab-always-indent 'complete)
-(add-hook 'lisp-mode-hook (lambda()
-                            (hs-minor-mode 1)
-                            (setq indent-tabs-mode nil)))       ;Indent inserts spaces
+
+(defun add-format-hook (&rest hooks)
+  (dolist (hook hooks)
+    (add-hook hook (lambda()
+                     (hs-minor-mode 1)                          ;Basic code outlining
+                     (setq indent-tabs-mode nil)))))            ;Indent inserts spaces
+
+(add-format-hook 'lisp-mode-hook 'emacs-lisp-mode-hook)
 
 
 ;;;;;;;;;;;;;;;;;;;; Auto-complete ;;;;;;;;;;;;;;;;;;;;
