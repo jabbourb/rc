@@ -159,10 +159,12 @@
 (autoload 'stumpwm-mode "stumpwm-mode"
           "Major mode for editing StumpWM rc files" t)
 (add-to-list 'auto-mode-alist '("/\\.stumpwmrc$" . (lambda() (lisp-mode) (stumpwm-mode))))
-
-(add-to-list 'auto-mode-alist '("/PKGBUILD$" . shell-script-mode))              ;Arch PKGBUILD
-
-(add-to-list 'auto-mode-alist '("\\`/etc/" . conf-mode) 1)                      ;If no other mode matches
+                                        ;Arch PKGBUILD
+(add-to-list 'auto-mode-alist '("/PKGBUILD$" . shell-script-mode))
+                                        ; Git commit messages
+(add-to-list 'auto-mode-alist '("/COMMIT_EDITMSG$" . (lambda() (diff-mode) (auto-fill-mode) (flyspell-mode))))
+                                        ;If no other mode matches
+(add-to-list 'auto-mode-alist '("\\`/etc/" . conf-mode) 1)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (custom-set-variables
