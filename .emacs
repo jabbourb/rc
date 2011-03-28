@@ -1,19 +1,13 @@
 (require 'cl)
 (add-to-list 'load-path "~/.emacs.d/site-lisp")
 
+
 ;;;;;;;;;;;;;;;;;;;; Utilities ;;;;;;;;;;;;;;;;;;;;
 (setq browse-url-browser-function 'browse-url-generic)          ;Default browser
 (setq browse-url-generic-program "uzbl-browser")
 
 
 ;;;;;;;;;;;;;;;;;;;; L&F ;;;;;;;;;;;;;;;;;;;;
-;; Vimpulse (Vim-like keybindings)
-(add-to-list 'load-path "~/.emacs.d/site-lisp/vimpulse")
-;; Emulate "C-x C-c" on ":q" instead of killing the server
-;;(setq vimpulse-want-quit-like-Vim nil)            ;This only deletes the buffer, and doesn't kill the client
-(require 'vimpulse)
-(setf (cdr (assoc "quit" vimpulse-extra-ex-commands)) '((save-buffers-kill-terminal)))
-
 ;; Color theme (manually setting colors doesn't play nicely with emacsclient :(
 ;;(set-foreground-color "white")
 ;;(set-background-color "black")
@@ -43,8 +37,53 @@
 (fringe-mode 0)                                                 ;Disable signalling columns
 
 ;; Server quirks
-;;(add-hook 'server-done-hook 'delete-frame)                        ;Close the client frame after the buffer has been closed
-(add-to-list 'default-frame-alist '(font . "Inconsolata 14")) ;Required to set font for every new client frame
+;;(add-hook 'server-done-hook 'delete-frame)                    ;Close the client frame after the buffer has been closed
+(add-to-list 'default-frame-alist '(font . "Inconsolata 14"))   ;Required to set font for every new client frame
+
+
+;;;;;;;;;;;;;;;;;;;; General bindings ;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'load-path "~/.emacs.d/site-lisp/vimpulse")
+;; (setq vimpulse-want-quit-like-Vim nil)                       ;This only deletes the buffer, and doesn't kill the client
+(require 'vimpulse)
+(setf (cdr (assoc "quit" vimpulse-extra-ex-commands)) '((vimpulse-kill-current-buffer)))
+(global-set-key (kbd "C-g") 'viper-intercept-ESC-key)           ;Emulate ESC on C-g
+
+;; (defmacro* map-global(&body mappings)
+;;   `(progn
+;;      ,@(mapcar (lambda(map)
+;;                  `(define-key global-map (kbd ,(car map)) ,(cadr map)))
+;;                mappings)))
+;;
+;; (defmacro* definter(&body body)
+;;   `(lambda()
+;;      (interactive)
+;;      ,@body))
+;;
+;; (defun kill-region-or-word()
+;;   (interactive)
+;;   (if (region-active-p)
+;;       (kill-region (mark) (point))
+;;     (kill-word nil)))
+;;
+;; (map-global
+;;  ("M-h" 'backward-char)
+;;  ("M-j" 'next-line)
+;;  ("M-k" 'previous-line)
+;;  ("M-l" 'forward-char)
+;;  ("M-H" 'backward-word)
+;;  ("M-J" 'scroll-up)
+;;  ("M-K" 'scroll-down)
+;;  ("M-L" 'forward-word)
+;;  ("M-SPC" 'set-mark-command)
+;;  ("M-d" 'kill-region-or-word)
+;;  ("M-D" 'kill-line)
+;;  ("M-u" 'undo)
+;;  ("M-o" (definter (end-of-line) (newline-and-indent)))
+;;  ("M-O" (definter (previous-line) (end-of-line) (newline-and-indent)))
+;;  ("M-g" (definter (goto-char (point-min))))
+;;  ("M-G" (definter (goto-char (point-max))))
+;;
+;;  ("C-o" 'pop-global-mark))
 
 
 ;;;;;;;;;;;;;;;;;;;; Unicode ;;;;;;;;;;;;;;;;;;;;
@@ -121,9 +160,12 @@
 
 ;;;;;;;;;;;;;;;;;;;; Slime ;;;;;;;;;;;;;;;;;;;;
 (setq inferior-lisp-program "/usr/bin/sbcl")
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
-(require 'slime-autoloads)
-(slime-setup '(slime-fancy))
+;; Use slime-helper from QuickLisp to maintain/load Slime
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
+;; (require 'slime-autoloads)
+;; Functions to load ASDF systems
+(slime-setup '(slime-asdf))
 
 
 ;;;;;;;;;;;;;;;;;;;; Org mode ;;;;;;;;;;;;;;;;;;;;
