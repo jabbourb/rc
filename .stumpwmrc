@@ -1,5 +1,5 @@
 (in-package :stumpwm)
-(set-contrib-dir "/usr/share/stumpwm")
+(set-contrib-dir "~/.stumpwm.d/")
 
 ;;; Modifier: Windows key
 (defparameter *mod-key* "s")
@@ -94,10 +94,23 @@
 
 
 ;;; Mode-line
+(setf *time-modeline-string* "%R")
+
+(load-module "maildir")
+(maildir-set-update-time 60)
+(setf *maildir-path* "~/mail/")
+(setf *maildir-modeline-fmt* "%n")
+
+(load-module "wifi")
+(setf stumpwm.contrib.wifi:*wireless-device* "wlan0")
+(setf stumpwm.contrib.wifi:*iwconfig-path* "/usr/sbin/iwconfig")
+
+(load-module "battery-portable")
+
 (setf *mode-line-timeout* 1
       *window-format* "%n%s%30t%m"
-      *screen-mode-line-format* (list '(:eval (run-shell-command "date +%R|tr -d '\\n'" t)) ;Remove trailing newline
-                                      " [^B%n^b] %W"))
+      *screen-mode-line-format* "^B%M^b %d [^B%n^b] %W [%I | %B]")
+
 ;; Activate the mode line for the current screen
 (if (not (head-mode-line (current-head)))
      (toggle-mode-line (current-screen) (current-head)))
