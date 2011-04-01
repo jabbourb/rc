@@ -164,8 +164,8 @@
 (load (expand-file-name "~/quicklisp/slime-helper.el"))
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime/")
 ;; (require 'slime-autoloads)
-;; Functions to load ASDF systems
-(slime-setup '(slime-asdf))
+;; Enhanced REPL + ASDF
+(slime-setup '(slime-fancy slime-asdf))
 
 
 ;;;;;;;;;;;;;;;;;;;; Org mode ;;;;;;;;;;;;;;;;;;;;
