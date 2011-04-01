@@ -107,9 +107,19 @@
 
 (load-module "battery-portable")
 
+(defun read-sound-level ()
+  "This will only get the left channel"
+    (multiple-value-bind (match? sub)
+        (cl-ppcre:scan-to-strings "\\[(.*?%)\\]"
+                                  (run-shell-command "amixer sget Master" t))
+      (if match?
+          (aref sub 0)
+          "Unknown")))
+
 (setf *mode-line-timeout* 1
       *window-format* "%n%s%30t%m"
-      *screen-mode-line-format* "^B%M^b %d [^B%n^b] %W [%I | %B]")
+      *screen-mode-line-format* (list "^B%M^b %d [^B%n^b] %W [%I | %B | "
+                                      '(:eval (read-sound-level)) "]"))
 
 ;; Activate the mode line for the current screen
 (if (not (head-mode-line (current-head)))
