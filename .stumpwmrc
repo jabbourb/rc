@@ -29,6 +29,7 @@
   (":" "colon")
   (";" "eval")
   ("d" "delete")
+  ("l" "exec slimlock")
   ("h" "exec sudo pm-suspend")
   ("H" "exec sudo pm-hibernate"))
 
