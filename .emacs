@@ -48,6 +48,9 @@
 (setf (cdr (assoc "quit" vimpulse-extra-ex-commands)) '((vimpulse-kill-current-buffer)))
 (global-set-key (kbd "C-g") 'viper-intercept-ESC-key)           ;Emulate ESC on C-g
 
+(global-set-key [f12] 'compile)
+(setq compilation-read-command nil)
+
 ;; (defmacro* map-global(&body mappings)
 ;;   `(progn
 ;;      ,@(mapcar (lambda(map)
